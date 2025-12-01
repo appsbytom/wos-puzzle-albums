@@ -6,15 +6,27 @@
   let activeCollection = 0;
   let elementRef;
 
-  $: ownedPerCollection = album.puzzles.map(col => ({
-    num: col.id,
-    cardIds: col.pieces.filter(card => card.num === 2).map(card => card.id).join(',')
-  }));
-
-  $: clipboardText = ownedPerCollection.map(c => `${c.num}:${c.cardIds}`).join('\n');
-
   function copyOwnedLists() {
+    const ownedPerCollection = album.puzzles.map(col => ({
+      num: col.id,
+      cardIds: col.pieces.filter(card => card.num === 2).map(card => card.id).join(',')
+    }));
+    const clipboardText = `${album.name} spares:\n${ownedPerCollection.map(c => `${c.num}:${c.cardIds}`).join('\n')}`;
+
     navigator.clipboard.writeText(clipboardText).then(() => {
+      copied = true;
+      setTimeout(() => copied = false, 1200);
+    });
+  }
+
+  function copyNeedsLists() {
+    const needsPerCollection = album.puzzles.map(col => ({
+      num: col.id,
+      cardIds: col.pieces.filter(card => card.num === 0).map(card => card.id).join(',')
+    }));
+    const needsClipboardText = `${album.name} needs:\n${needsPerCollection.map(c => `${c.num}:${c.cardIds}`).join('\n')}`;
+
+    navigator.clipboard.writeText(needsClipboardText).then(() => {
       copied = true;
       setTimeout(() => copied = false, 1200);
     });
@@ -24,9 +36,14 @@
 <div class="book">
   <h2 class="book-heading">{album.name}</h2>
 
-  <button class="owned-btn" on:click={copyOwnedLists}>
-    Copy spares
-  </button>
+  <div>
+    <button class="owned-btn" on:click={copyOwnedLists}>
+      Copy spares
+    </button>
+    <button on:click={copyNeedsLists} class="needs-btn">
+      Copy needs
+    </button>
+  </div>
   {#if copied}
     <span class="copied-confirm">Copied!</span>
   {/if}
@@ -86,6 +103,16 @@
     display: inline-block;
     vertical-align: middle;
     transition: opacity 0.4s;
+  }
+  .needs-btn {
+    margin: 0.7rem 0;
+    font-size: 1em;
+    padding: 0.4em 1em;
+    border-radius: 6px;
+    border: 1.5px solid #c5dde9;
+    background: #eaf3fa;
+    color: #234567;
+    cursor: pointer;
   }
   .carousel-content {
     max-width: 400px;
