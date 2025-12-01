@@ -4,6 +4,7 @@
 
   let copied = false;
   let activeCollection = 0;
+  let elementRef;
 
   $: ownedPerCollection = album.puzzles.map(col => ({
     num: col.id,
@@ -33,12 +34,20 @@
   <div>
     <div>
       <div class="carousel-content">
-        <Puzzle bind:collection={album.puzzles[activeCollection]} />
+        <Puzzle bind:ref={elementRef} bind:collection={album.puzzles[activeCollection]} />
       </div>
     </div>
     <div class="carousel-dots">
       {#each album.puzzles as _, i}
-        <div class="dot {i === activeCollection ? 'active' : ''}" on:click={() => activeCollection = i} />
+        <div
+          class="dot {i === activeCollection ? 'active' : ''}"
+          on:click={() => {
+            elementRef.scrollTo({ top: 0, behavior: 'smooth' });
+            return activeCollection = i;
+          }}
+        >
+          {i + 1}
+        </div>
       {/each}
     </div>
   </div>
@@ -87,22 +96,19 @@
     display: flex;
     justify-content: center;
     gap: 0.5em;
-    margin-top: 1.1em;
+    margin-top: 16px;
   }
   .dot {
-    width: 0.8em;
-    height: 0.8em;
-    background: #c5dde9;
+    padding: 5px 8px;
+    background: rgba(161, 169, 175, 0.37);
     border-radius: 50%;
     display: inline-block;
     cursor: pointer;
     transition: background 0.2s, transform 0.2s;
-    border: 1.5px solid #c5dde9;
+    font-size: 14px;
   }
   .dot.active {
-    background: #234567;
-    border-color: #234567;
-    transform: scale(1.15);
+    background: #c5dde9;
   }
   @media (max-width: 700px) {
     .carousel-content {

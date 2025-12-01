@@ -1,5 +1,6 @@
 <script>
   export let collection;
+  export let ref;
   import Piece from './Piece.svelte';
 </script>
 
@@ -7,7 +8,7 @@
   <h3 class="collection-title">
     {collection.name}
   </h3>
-  <div class="cards">
+  <div class="cards" bind:this={ref}>
     {#each collection.pieces as card (card.id)}
       <Piece bind:card />
     {/each}
