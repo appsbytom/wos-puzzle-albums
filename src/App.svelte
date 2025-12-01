@@ -9,7 +9,7 @@
     {
       id: 1,
       name: 'Battlefield Epic',
-      puzzles: [12,15,15,15,15,18,18,18,18].map((numPieces, index) => ({
+      puzzles: [12,14,14,13,12,14,13,11,11].map((numPieces, index) => ({
         id: index + 1,
         name: `Puzzle ${index + 1}`,
         pieces: Array.from({ length: numPieces }, (_, j) => ({
@@ -21,7 +21,7 @@
     {
       id: 2,
       name: 'Spectacular Adventures',
-      puzzles: [12,15,15,15,15,18,18,18,18].map((numPieces, index) => ({
+      puzzles: [12,14,14,13,12,14,13,11,11].map((numPieces, index) => ({
         id: index + 1,
         name: `Puzzle ${index + 1}`,
         pieces: Array.from({ length: numPieces }, (_, j) => ({

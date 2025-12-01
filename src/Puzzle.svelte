@@ -30,7 +30,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
-    max-height: 240px;
+    max-height: 325px;
     overflow-y: scroll;
   }
 </style>
