@@ -1,58 +1,70 @@
 <script>
-  import Album from './Album.svelte';
-  import { saveOwnedPieces, loadOwnedPieces } from './storage.js';
   import { onMount } from 'svelte';
+  import { supabase, user } from './lib/supabase.svelte.js';
+  import Auth from './Auth.svelte';
+  import Albums from './Albums.svelte';
 
-  let loaded = false;
-
-  let albums = [
-    {
-      id: 1,
-      name: 'Battlefield Epic',
-      puzzles: [12,14,14,13,12,14,13,11,11].map((numPieces, index) => ({
-        id: index + 1,
-        name: `Puzzle ${index + 1}`,
-        pieces: Array.from({ length: numPieces }, (_, j) => ({
-          id: j + 1,
-          num: 0,
-        }))
-      }))
-    },
-    {
-      id: 2,
-      name: 'Spectacular Adventures',
-      puzzles: [12,14,14,13,12,14,13,11,11].map((numPieces, index) => ({
-        id: index + 1,
-        name: `Puzzle ${index + 1}`,
-        pieces: Array.from({ length: numPieces }, (_, j) => ({
-          id: j + 1,
-          num: 0,
-        }))
-      }))
-    }
-  ];
+  async function signOut() {
+    await supabase.auth.signOut();
+  }
 
   onMount(() => {
-    loadOwnedPieces(albums);
-    loaded = true;
-  });
+    supabase.auth.getSession().then(({ data }) => {
+      user.value = data?.session?.user
+    });
 
-  // Only save after initial load is complete
-  $: if (loaded) saveOwnedPieces(albums);
+    // subscribe to changes
+    const { data: { subscription }} = supabase.auth.onAuthStateChange((_event, session) => {
+      user.value = session?.user;
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    }
+  });
 </script>
 
 <main>
-  {#each albums as album (album.id)}
-    <Album bind:album />
-  {/each}
+  {#if user.value}
+    <div class="user">
+      <p>[{user.value.user_metadata.alliance}]{user.value.user_metadata.name} <span class="state">{user.value.user_metadata.state}</span></p>
+      <button onclick={signOut}>Sign out</button>
+    </div>
+    <Albums />
+  {:else}
+    <Auth />
+  {/if}
 </main>
 
 <style>
   main {
     font-family: Arial, sans-serif;
-    padding: 1rem; /* reduced from 2rem */
+    padding: 1rem;
+    max-width: 425px;
+    margin: 0 auto;
   }
   * {
     box-sizing: border-box;
+  }
+  .user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    p {
+        margin: 0;
+    }
+  }
+  .state {
+    font-size: 12px
+  }
+  button {
+    padding: 4px 8px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    background-color: lightgray;
+    cursor: pointer;
+    font-weight: bold;
   }
 </style>

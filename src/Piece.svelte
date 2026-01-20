@@ -1,30 +1,40 @@
 <script>
-  export let card;
+import { supabase, user } from './lib/supabase.svelte.js';
+import { get } from 'svelte/store';
 
-  function toggleOwned() {
-    if (card.num === 0) {
-      card.num += 1;
-    }
-    else if (card.num === 1) {
-      card.num += 1;
-    }
-    else if (card.num === 2) {
-      card.num = 0;
-    }
+let { piece, selections, puzzleNum, albumId } = $props()
+const index = $derived(selections.findIndex(s => s.puzzle_num === puzzleNum && s.piece_num === piece.number));
+const saved = $derived(selections[index]);
+
+const togglePiece = async () => {
+  if (!saved) {
+    const newPiece = { album_id: albumId, puzzle_num: puzzleNum, piece_num: piece.number, spare: false };
+    selections.push(newPiece);
+    await supabase.from('users_pieces').insert(newPiece);
+  } else if (!saved.spare) {
+    saved.spare = true;
+    await supabase.from('users_pieces')
+      .update({ spare: true })
+      .eq('album_id', albumId).eq('puzzle_num', puzzleNum).eq('piece_num', piece.number).eq('user_id', user.value.id);
+  } else {
+    selections.splice(index, 1)
+    selections = selections;
+    await supabase.from('users_pieces').delete()
+      .eq('album_id', albumId).eq('puzzle_num', puzzleNum).eq('piece_num', piece.number).eq('user_id', user.value.id);
   }
+}
 </script>
 
 <button
-        class="card {card.num === 1 ? 'owned' : card.num === 2 ? 'spare' : 'not-owned'}"
-        on:click={toggleOwned}
-        tabindex="0"
-        aria-pressed={card.owned}
-        on:keydown={(e) => (e.key === "Enter" || e.key === " ") && toggleOwned()}
+    class="card"
+    class:owned={saved}
+    class:spare={saved?.spare}
+    onclick={togglePiece}
 >
-    <p>{card.id}</p>
-    {#if card.num === 2}
-        <p class="spareText">(Spare)</p>
-        {/if}
+    {piece.number}
+    {#if saved?.spare}
+        <span>(Spare)</span>
+    {/if}
 </button>
 
 <style>
@@ -33,25 +43,22 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 1.2em;
+    font-size: 18px;
     border-radius: 8px;
     cursor: pointer;
-    user-select: none;
-    background: gray;
-    color: white;
+    background: lightgray;
     width: 100%;
     height: 70px;
+    border: none;
   }
-  .card p {
-    margin: 0;
-  }
-  .card .spareText {
-    font-size: 0.7em;
+  .card span {
+    font-size: 14px;
   }
   .card.owned {
-    background: green;
+    background: lawngreen;
   }
   .card.spare {
-    background: dodgerblue;
+    background: green;
+    color: white;
   }
 </style>
