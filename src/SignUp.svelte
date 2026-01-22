@@ -1,5 +1,6 @@
 <script>
   import { supabase } from './lib/supabase.svelte.js';
+  import PasswordInput from './PasswordInput.svelte';
 
   let email = '', password = '', name = '', state = '', alliance = '';
   let message = '';
@@ -30,27 +31,25 @@
 
 <div>
     <h1 class="heading">Sign Up</h1>
+    <p class="disclaimer">All information entered should be about Whiteout Survival</p>
     <form onsubmit={signUp}>
-        <div class="input">
+        <div>
             <label for="email-up">Email</label>
             <input id="email-up" placeholder="you@example.com" type="email" required bind:value={email} />
         </div>
-        <div class="input">
-            <label for="name">Name</label>
+        <div>
+            <label for="name">Username</label>
             <input id="name" type="text" required bind:value={name}>
         </div>
-        <div class="input">
-            <label for="state">State</label>
-            <input id="state" type="text" required bind:value={state}>
+        <div>
+            <label for="state">Game State</label>
+            <input id="state" type="number" required bind:value={state}>
         </div>
-        <div class="input">
+        <div>
             <label for="alliance">Alliance</label>
             <input id="alliance" type="text" required bind:value={alliance}>
         </div>
-        <div class="input">
-            <label for="password-up">Password</label>
-            <input id="password-up" type="password" required bind:value={password} />
-        </div>
+        <PasswordInput id="password-up" bind:value={password} />
         <button type="submit">Sign up</button>
         {#if message}
             <p class="message">{message}</p>
@@ -61,22 +60,23 @@
 <style>
   .heading {
     margin-top: 0;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     font-size: 24px;
     text-align: center;
   }
-  .input {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 8px;
-    gap: 4px;
+
+  .disclaimer {
+    font-size: 14px;
+    color: dimgray;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 16px;
   }
 
-  input {
-    padding: 4px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .message {

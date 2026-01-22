@@ -1,6 +1,7 @@
 <script>
 import { supabase } from './lib/supabase.svelte.js';
 import SignUp from './SignUp.svelte';
+import PasswordInput from './PasswordInput.svelte';
 
   let email = '', password = '', message = '';
 
@@ -15,14 +16,11 @@ import SignUp from './SignUp.svelte';
 <div>
     <h1 class="heading">Sign In</h1>
     <form onsubmit={signIn}>
-        <div class="input">
+        <div>
             <label for="email">Email</label>
             <input id="email" placeholder="you@example.com" type="email" required bind:value={email} />
         </div>
-        <div class="input">
-            <label for="password">Password</label>
-            <input id="password" type="password" required bind:value={password} />
-        </div>
+        <PasswordInput id="password" bind:value={password} />
         <button type="submit">Sign in</button>
         {#if message}
             <p class="message">{message}</p>
@@ -45,19 +43,12 @@ import SignUp from './SignUp.svelte';
     font-size: 24px;
     text-align: center;
   }
-    .input {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 8px;
-        gap: 4px;
-    }
 
-    input {
-        padding: 4px;
-        font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
     .message {
         color: red;

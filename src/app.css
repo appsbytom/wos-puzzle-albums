@@ -2,3 +2,16 @@ body {
   margin: 0;
   padding: 0;
 }
+
+label {
+  display: block;
+  margin-bottom: 4px;
+}
+
+input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
