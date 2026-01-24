@@ -2,9 +2,10 @@
   import { supabase, user } from './lib/supabase.svelte.js';
   import Album from './Album.svelte';
 
-  let selections = $state([]);
+  let usersPieces = $state([]);
   let otherUsersPieces = $state([]);
   let selectedAlbum = $state('');
+  let selectedPuzzle = $state(0);
   let hasOldData = $state(localStorage.getItem('ownedPieces') ?? false);
 
   function createAlbum(name, id, puzzlePieceCounts) {
@@ -40,12 +41,13 @@
   ];
 
   async function selectAlbumById() {
-    const { data: usersPieces } = await supabase.from('users_pieces')
+    selectedPuzzle = 0;
+    const { data: usersPiecesData } = await supabase.from('users_pieces')
       .select('*')
       .eq('album_id', selectedAlbum)
       .eq('user_id', user.value.id);
+    usersPieces = usersPiecesData
 
-    selections = usersPieces
     const { data } = await supabase.rpc('get_pieces_others_have_that_i_dont', { album: selectedAlbum });
     otherUsersPieces = data
   }
@@ -71,20 +73,25 @@
 </script>
 
 <div class="row">
-    <select class="album-selection" bind:value={selectedAlbum} onchange={selectAlbumById}>
-        <option value="">Select an album</option>
-        {#each albums as album (album.id)}
-            <option value={album.id}>{album.name}</option>
-        {/each}
-    </select>
+  <select class="album-selection" bind:value={selectedAlbum} onchange={selectAlbumById}>
+    <option value="">Select an album</option>
+    {#each albums as album (album.id)}
+      <option value={album.id}>{album.name}</option>
+    {/each}
+  </select>
 
-    {#if hasOldData}
-        <button onclick={migrate}>Transfer old data</button>
-    {/if}
+  {#if hasOldData}
+    <button onclick={migrate}>Transfer old data</button>
+  {/if}
 </div>
 
 {#if selectedAlbum}
-    <Album album={albums.find(album => album.id === selectedAlbum)} {selections} {otherUsersPieces} />
+  <Album
+      album={albums.find(album => album.id === selectedAlbum)}
+      bind:selectedPuzzle
+      {usersPieces}
+      otherUsersPieces={otherUsersPieces.filter(piece => !usersPieces.find(s => s.puzzle_num === piece.puzzle_num && s.piece_num === piece.piece_num))}
+  />
 {/if}
 
 <style>
@@ -94,10 +101,12 @@
     gap: 8px;
     margin-top: 16px;
   }
-    .album-selection {
-        font-size: 14px;
-        padding: 4px;
-    }
+  .album-selection {
+    font-size: 14px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
 
   button {
     padding: 4px 8px;

@@ -30,31 +30,31 @@
 </script>
 
 <div>
-    <h1 class="heading">Sign Up</h1>
-    <p class="disclaimer">All information entered should be about Whiteout Survival</p>
-    <form onsubmit={signUp}>
-        <div>
-            <label for="email-up">Email</label>
-            <input id="email-up" placeholder="you@example.com" type="email" required bind:value={email} />
-        </div>
-        <div>
-            <label for="name">Username</label>
-            <input id="name" type="text" required bind:value={name}>
-        </div>
-        <div>
-            <label for="state">Game State</label>
-            <input id="state" type="number" required bind:value={state}>
-        </div>
-        <div>
-            <label for="alliance">Alliance</label>
-            <input id="alliance" type="text" required bind:value={alliance}>
-        </div>
-        <PasswordInput id="password-up" bind:value={password} />
-        <button type="submit">Sign up</button>
-        {#if message}
-            <p class="message">{message}</p>
-        {/if}
-    </form>
+  <h1 class="heading">Sign Up</h1>
+  <p class="disclaimer">All information entered should be about Whiteout Survival</p>
+  <form onsubmit={signUp}>
+    <div>
+      <label for="email-up">Email</label>
+      <input id="email-up" placeholder="you@example.com" type="email" required bind:value={email} />
+    </div>
+    <div>
+      <label for="name">Username</label>
+      <input id="name" type="text" required bind:value={name}>
+    </div>
+    <div>
+      <label for="state">Game State</label>
+      <input id="state" type="number" required bind:value={state}>
+    </div>
+    <div>
+      <label for="alliance">Alliance</label>
+      <input id="alliance" type="text" required bind:value={alliance}>
+    </div>
+    <PasswordInput id="password-up" bind:value={password} />
+    <button type="submit">Sign up</button>
+    {#if message}
+      <p class="message">{message}</p>
+    {/if}
+  </form>
 </div>
 
 <style>

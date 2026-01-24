@@ -1,28 +1,28 @@
 <script>
-import { supabase, user } from './lib/supabase.svelte.js';
-import { get } from 'svelte/store';
+  import { supabase, user } from './lib/supabase.svelte.js';
+  import { get } from 'svelte/store';
 
-let { piece, selections, puzzleNum, albumId } = $props()
-const index = $derived(selections.findIndex(s => s.puzzle_num === puzzleNum && s.piece_num === piece.number));
-const saved = $derived(selections[index]);
+  let { piece, usersPieces, puzzleNum, albumId } = $props()
+  const index = $derived(usersPieces.findIndex(s => s.puzzle_num === puzzleNum && s.piece_num === piece.number));
+  const saved = $derived(usersPieces[index]);
 
-const togglePiece = async () => {
-  if (!saved) {
-    const newPiece = { album_id: albumId, puzzle_num: puzzleNum, piece_num: piece.number, spare: false };
-    selections.push(newPiece);
-    await supabase.from('users_pieces').insert(newPiece);
-  } else if (!saved.spare) {
-    saved.spare = true;
-    await supabase.from('users_pieces')
-      .update({ spare: true })
-      .eq('album_id', albumId).eq('puzzle_num', puzzleNum).eq('piece_num', piece.number).eq('user_id', user.value.id);
-  } else {
-    selections.splice(index, 1)
-    selections = selections;
-    await supabase.from('users_pieces').delete()
-      .eq('album_id', albumId).eq('puzzle_num', puzzleNum).eq('piece_num', piece.number).eq('user_id', user.value.id);
+  const togglePiece = async () => {
+    if (!saved) {
+      const newPiece = { album_id: albumId, puzzle_num: puzzleNum, piece_num: piece.number, spare: false };
+      usersPieces.push(newPiece);
+      await supabase.from('users_pieces').insert(newPiece);
+    } else if (!saved.spare) {
+      saved.spare = true;
+      await supabase.from('users_pieces')
+        .update({ spare: true })
+        .eq('album_id', albumId).eq('puzzle_num', puzzleNum).eq('piece_num', piece.number).eq('user_id', user.value.id);
+    } else {
+      usersPieces.splice(index, 1)
+      usersPieces = usersPieces;
+      await supabase.from('users_pieces').delete()
+        .eq('album_id', albumId).eq('puzzle_num', puzzleNum).eq('piece_num', piece.number).eq('user_id', user.value.id);
+    }
   }
-}
 </script>
 
 <button
@@ -31,10 +31,10 @@ const togglePiece = async () => {
     class:spare={saved?.spare}
     onclick={togglePiece}
 >
-    {piece.number}
-    {#if saved?.spare}
-        <span>(Spare)</span>
-    {/if}
+  {piece.number}
+  {#if saved?.spare}
+    <span>(Spare)</span>
+  {/if}
 </button>
 
 <style>
