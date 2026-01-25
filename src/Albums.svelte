@@ -22,22 +22,22 @@
   }
 
   let albums = [
-    createAlbum('Rekindled Flames', 'rekindled-flames', [9,9,9,12,12,12,14,13,12]),
-    createAlbum('Song of Heroes', 'song-of-heroes', [9,9,12,12,12,14,13,12,14]),
-    createAlbum('Explore the World', 'explore-the-world', [9,12,12,12,14,13,12,14,13]),
-    createAlbum('Daybreak Island', 'daybreak-island', [12,12,12,14,13,12,14,13,11]),
-    createAlbum('Tundra Alliance', 'tundra-alliance', [12,12,14,13,12,14,13,13,11]),
-    createAlbum('Battlefield Epic', 'battlefield-epic', [12,14,14,13,12,14,13,11,11]),
-    createAlbum('Spectacular Adventures', 'spectacular-adventures', [12,14,14,13,12,14,13,11,11]),
-    createAlbum('Divine Weapons', 'divine-weapons', [12,14,14,13,12,14,13,11,11]),
-    createAlbum('The Labyrinth', 'the-labyrinth', [12,14,14,13,12,14,12,12,11]),
-    createAlbum('Nature\'s Strength', 'natures-strength', [12,14,14,13,12,13,13,11,12]),
-    createAlbum('Crystalline Mysteries', 'crystalline-mysteries', [12,14,14,13,12,14,13,11,11]),
-    createAlbum('Ballad of Wind and Cold', 'ballad-of-wind-and-cold', [12,14,14,13,12,14,12,12,11]),
-    createAlbum('Infernal Power', 'infernal-power', [12,14,14,13,12,13,13,11,12]),
-    createAlbum('Prerogative of the Flame', 'prerogative-of-the-flame', [12,14,14,13,12,14,13,11,11]),
-    createAlbum('Frostdragon Empire', 'frostdragon-empire', [12,14,14,13,12,14,12,12,11]),
-    createAlbum('Kings of Combat', 'kings-of-combat', [12,14,14,13,12,13,13,11,12])
+    createAlbum('Rekindled Flames', 'rekindled-flames', [9, 9, 9, 12, 12, 12, 14, 13, 12]),
+    createAlbum('Song of Heroes', 'song-of-heroes', [9, 9, 12, 12, 12, 14, 13, 12, 14]),
+    createAlbum('Explore the World', 'explore-the-world', [9, 12, 12, 12, 14, 13, 12, 14, 13]),
+    createAlbum('Daybreak Island', 'daybreak-island', [12, 12, 12, 14, 13, 12, 14, 13, 11]),
+    createAlbum('Tundra Alliance', 'tundra-alliance', [12, 12, 14, 13, 12, 14, 13, 13, 11]),
+    createAlbum('Battlefield Epic', 'battlefield-epic', [12, 14, 14, 13, 12, 14, 13, 11, 11]),
+    createAlbum('Spectacular Adventures', 'spectacular-adventures', [12, 14, 14, 13, 12, 14, 13, 11, 11]),
+    createAlbum('Divine Weapons', 'divine-weapons', [12, 14, 14, 13, 12, 14, 13, 11, 11]),
+    createAlbum('The Labyrinth', 'the-labyrinth', [12, 14, 14, 13, 12, 14, 12, 12, 11]),
+    createAlbum('Nature\'s Strength', 'natures-strength', [12, 14, 14, 13, 12, 13, 13, 11, 12]),
+    createAlbum('Crystalline Mysteries', 'crystalline-mysteries', [12, 14, 14, 13, 12, 14, 13, 11, 11]),
+    createAlbum('Ballad of Wind and Cold', 'ballad-of-wind-and-cold', [12, 14, 14, 13, 12, 14, 12, 12, 11]),
+    createAlbum('Infernal Power', 'infernal-power', [12, 14, 14, 13, 12, 13, 13, 11, 12]),
+    createAlbum('Prerogative of the Flame', 'prerogative-of-the-flame', [12, 14, 14, 13, 12, 14, 13, 11, 11]),
+    createAlbum('Frostdragon Empire', 'frostdragon-empire', [12, 14, 14, 13, 12, 14, 12, 12, 11]),
+    createAlbum('Kings of Combat', 'kings-of-combat', [12, 14, 14, 13, 12, 13, 13, 11, 12])
   ];
 
   async function selectAlbumById() {
@@ -48,6 +48,10 @@
       .eq('user_id', user.value.id);
     usersPieces = usersPiecesData
 
+    await getOtherUsersPieces()
+  }
+
+  async function getOtherUsersPieces() {
     const { data } = await supabase.rpc('get_pieces_others_have_that_i_dont', { album: selectedAlbum });
     otherUsersPieces = data
   }
@@ -87,10 +91,11 @@
 
 {#if selectedAlbum}
   <Album
-      album={albums.find(album => album.id === selectedAlbum)}
-      bind:selectedPuzzle
-      {usersPieces}
-      otherUsersPieces={otherUsersPieces.filter(piece => !usersPieces.find(s => s.puzzle_num === piece.puzzle_num && s.piece_num === piece.piece_num))}
+    album={albums.find(album => album.id === selectedAlbum)}
+    bind:selectedPuzzle
+    {usersPieces}
+    otherUsersPieces={otherUsersPieces.filter(piece => !usersPieces.find(s => s.puzzle_num === piece.puzzle_num && s.piece_num === piece.piece_num))}
+    {getOtherUsersPieces}
   />
 {/if}
 
@@ -101,6 +106,7 @@
     gap: 8px;
     margin-top: 16px;
   }
+
   .album-selection {
     font-size: 14px;
     padding: 8px;

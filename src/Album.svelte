@@ -2,9 +2,16 @@
   import Piece from './Piece.svelte';
   import { user } from './lib/supabase.svelte.js';
 
-  let { album, selectedPuzzle = $bindable(), usersPieces, otherUsersPieces } = $props()
+  let { album, selectedPuzzle = $bindable(), usersPieces, otherUsersPieces, getOtherUsersPieces } = $props()
   const puzzle = $derived(album.puzzles[selectedPuzzle]);
   let element;
+  let loading = $state(false)
+
+  const refreshOtherUsersPieces = async () => {
+    loading = true;
+    await getOtherUsersPieces();
+    loading = false;
+  }
 </script>
 
 <div class="book">
@@ -37,6 +44,9 @@
     </ul>
   {:else}
     <h2 class="others-heading">&#128542; No one in {user.value.user_metadata.alliance} has the pieces you need</h2>
+    <button type="button" onclick={refreshOtherUsersPieces}>
+      {loading ? 'Checking...' : 'Check again'}
+    </button>
   {/if}
 </div>
 
@@ -73,7 +83,7 @@
     display: flex;
     justify-content: center;
     gap: 0.5em;
-    margin-top: 16px;
+    margin-top: 8px;
   }
 
   .dot {
@@ -95,7 +105,7 @@
 
   .others-heading {
     font-size: 16px;
-    margin-top: 24px;
+    margin-top: 16px;
     margin-bottom: 0;
   }
 
@@ -104,5 +114,16 @@
     padding: 0;
     text-align: left;
     margin: 8px 0 0;
+  }
+
+  button {
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    background-color: lightgray;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 8px;
   }
 </style>
