@@ -88,9 +88,9 @@
   button {
     padding: 8px 16px;
     font-size: 16px;
-    border: none;
+    border: 1px solid lightgray;
     border-radius: 4px;
-    background-color: lightgray;
+    background: none;
     cursor: pointer;
     width: 100%;
     font-weight: bold;

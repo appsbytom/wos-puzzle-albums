@@ -117,9 +117,9 @@
   button {
     padding: 4px 8px;
     font-size: 14px;
-    border: none;
+    border: 1px solid lightgray;
     border-radius: 4px;
-    background-color: lightgray;
+    background: none;
     cursor: pointer;
     font-weight: bold;
   }

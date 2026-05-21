@@ -44,7 +44,7 @@
     </ul>
   {:else}
     <h2 class="others-heading">&#128542; No one in {user.value.user_metadata.alliance} has the pieces you need</h2>
-    <button type="button" onclick={refreshOtherUsersPieces}>
+    <button type="button" class="refresh-btn" onclick={refreshOtherUsersPieces}>
       {loading ? 'Checking...' : 'Check again'}
     </button>
   {/if}
@@ -117,7 +117,6 @@
   }
 
   button {
-    padding: 8px 16px;
     font-size: 14px;
     border: none;
     border-radius: 4px;
@@ -125,5 +124,12 @@
     cursor: pointer;
     font-weight: bold;
     margin-top: 8px;
+  }
+
+  .refresh-btn {
+    background: none;
+    border: 1px solid lightgray;
+    padding: 8px 10px;
+    font-weight: normal;
   }
 </style>
